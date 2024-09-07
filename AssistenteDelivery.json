@@ -1,0 +1,163 @@
+{
+    "Comment": "Assistente de Delivery com AWS Step Functions e Bedrock",
+    "StartAt": "ObterPreferenciasUsuario",
+    "States": {
+      "ObterPreferenciasUsuario": {
+        "Type": "Task",
+        "Resource": "arn:aws:lambda:us-east-1:123456789012:function:ObterPreferenciasUsuario",
+        "Next": "ClassificarTipoRefeicao"
+      },
+      "ClassificarTipoRefeicao": {
+        "Type": "Choice",
+        "Choices": [
+          {
+            "Variable": "$.tipoRefeicao",
+            "StringEquals": "Café da manhã",
+            "Next": "RecomendarComidasCafeManha"
+          },
+          {
+            "Variable": "$.tipoRefeicao",
+            "StringEquals": "Almoço",
+            "Next": "RecomendarComidasAlmoco"
+          },
+          {
+            "Variable": "$.tipoRefeicao",
+            "StringEquals": "Café da tarde",
+            "Next": "RecomendarComidasCafeTarde"
+          },
+          {
+            "Variable": "$.tipoRefeicao",
+            "StringEquals": "Jantar",
+            "Next": "RecomendarComidasJantar"
+          },
+          {
+            "Variable": "$.tipoRefeicao",
+            "StringEquals": "Ceia",
+            "Next": "RecomendarComidasCeia"
+          }
+        ],
+        "Default": "RecomendarComidasPadrao"
+      },
+      "RecomendarComidasCafeManha": {
+        "Type": "Task",
+        "Resource": "arn:aws:bedrock:us-east-1:123456789012:model:ComidaRecomendacao",
+        "Parameters": {
+          "Refeicao": "Cafe da manhã",
+          "TipoAlimentacao": "$.tipoAlimentacao"
+        },
+        "Next": "RecomendarBebidas"
+      },
+      "RecomendarComidasAlmoco": {
+        "Type": "Task",
+        "Resource": "arn:aws:bedrock:us-east-1:123456789012:model:ComidaRecomendacao",
+        "Parameters": {
+          "Refeicao": "Almoço",
+          "TipoAlimentacao": "$.tipoAlimentacao"
+        },
+        "Next": "RecomendarBebidas"
+      },
+      "RecomendarComidasCafeTarde": {
+        "Type": "Task",
+        "Resource": "arn:aws:bedrock:us-east-1:123456789012:model:ComidaRecomendacao",
+        "Parameters": {
+          "Refeicao": "Café da tarde",
+          "TipoAlimentacao": "$.tipoAlimentacao"
+        },
+        "Next": "RecomendarBebidas"
+      },
+      "RecomendarComidasJantar": {
+        "Type": "Task",
+        "Resource": "arn:aws:bedrock:us-east-1:123456789012:model:ComidaRecomendacao",
+        "Parameters": {
+          "Refeicao": "Jantar",
+          "TipoAlimentacao": "$.tipoAlimentacao"
+        },
+        "Next": "RecomendarBebidas"
+      },
+      "RecomendarComidasCeia": {
+        "Type": "Task",
+        "Resource": "arn:aws:bedrock:us-east-1:123456789012:model:ComidaRecomendacao",
+        "Parameters": {
+          "Refeicao": "Ceia",
+          "TipoAlimentacao": "$.tipoAlimentacao"
+        },
+        "Next": "RecomendarBebidas"
+      },
+      "RecomendarComidasPadrao": {
+        "Type": "Task",
+        "Resource": "arn:aws:bedrock:us-east-1:123456789012:model:ComidaRecomendacao",
+        "Parameters": {
+          "Refeicao": "Padrão",
+          "TipoAlimentacao": "$.tipoAlimentacao"
+        },
+        "Next": "RecomendarBebidas"
+      },
+      "RecomendarBebidas": {
+        "Type": "Choice",
+        "Choices": [
+          {
+            "Variable": "$.tipoBebida",
+            "StringEquals": "Sucos",
+            "Next": "RecomendarSucos"
+          },
+          {
+            "Variable": "$.tipoBebida",
+            "StringEquals": "Drinks",
+            "Next": "RecomendarDrinks"
+          },
+          {
+            "Variable": "$.tipoBebida",
+            "StringEquals": "Vinhos",
+            "Next": "RecomendarVinhos"
+          },
+          {
+            "Variable": "$.tipoBebida",
+            "StringEquals": "Cervejas artesanais",
+            "Next": "RecomendarCervejasArtesanais"
+          }
+        ],
+        "Default": "RecomendarBebidasPadrao"
+      },
+      "RecomendarSucos": {
+        "Type": "Task",
+        "Resource": "arn:aws:bedrock:us-east-1:123456789012:model:BebidaRecomendacao",
+        "Parameters": {
+          "TipoBebida": "Sucos"
+        },
+        "End": true
+      },
+      "RecomendarDrinks": {
+        "Type": "Task",
+        "Resource": "arn:aws:bedrock:us-east-1:123456789012:model:BebidaRecomendacao",
+        "Parameters": {
+          "TipoBebida": "Drinks"
+        },
+        "End": true
+      },
+      "RecomendarVinhos": {
+        "Type": "Task",
+        "Resource": "arn:aws:bedrock:us-east-1:123456789012:model:BebidaRecomendacao",
+        "Parameters": {
+          "TipoBebida": "Vinhos"
+        },
+        "End": true
+      },
+      "RecomendarCervejasArtesanais": {
+        "Type": "Task",
+        "Resource": "arn:aws:bedrock:us-east-1:123456789012:model:BebidaRecomendacao",
+        "Parameters": {
+          "TipoBebida": "Cervejas artesanais"
+        },
+        "End": true
+      },
+      "RecomendarBebidasPadrao": {
+        "Type": "Task",
+        "Resource": "arn:aws:bedrock:us-east-1:123456789012:model:BebidaRecomendacao",
+        "Parameters": {
+          "TipoBebida": "Padrão"
+        },
+        "End": true
+      }
+    }
+  }
+  
